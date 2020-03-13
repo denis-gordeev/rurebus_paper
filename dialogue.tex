@@ -50,10 +50,72 @@ In this work we present our system for RuREBus challenge held together with Dial
 \selectlanguage{english}
 
 \section{Introduction}
-Relation 
+There are many ways to extract information from text. One of the most popular approaches is to extract named entities and classify relations between them. One of the most popular datasets for this task is TACRED \cite{tacred} where semantic relations are understood as relations between two pairs of entities. 
+
+<TACRED METHODS>
+
+Unfortunately, such annotated datasets are scarce for most languages besides English. Some researchers have tried to solve this problem for the Russian language. They have used unsupervised approaches based on knowledge databases such as Wikidata and online encyclopedias such as Wikipedia. Models trained this way tend to be not specialized because the original database does not contain relations from the required domain. They also tend to work only for the most popular relation types such as geographical or professional ones which are common to Wikipedia.
+
+There are few annotated datasets for the Russian language. Among similar tasks to relation extraction there was held FactRuEval 2016 within the conference Dialog 2016. Within the competition contestants had to extract facts from news articles and to fill special slots in these facts (e.g. one of the fact types was 'Occupation' and its fields were 'POSITION', 'WHO', 'WHERE' and 'PHASE').
+
+RuREBus competition was devoted to the problem of relation extraction and named entities recognition in a specialized business domain.
+
+\section{Shared task overview}
+The organizers of the competition have provided 188 annotated texts as the training dataset and 544 texts as the test dataset for the first and thirds tracks and <N> <N> for the second track respectively. All texts were provided by the Ministry of Economic Development of the Russian Federation. The corpus consists of various regional and strategic plan reports. There are in total 8 named entity classes and 11 semantic relation classes. The organizers have also provided a large unannotated dataset for language model fine-tuning. However, we did not use it.
+
+TEXT EXAMPLE
+ 
+Named entity groups could contain rather broad types of entities, for example "SOC" entities contained social groups as well as various social attributes - phrases like 'blue collar workers' and 'housing accessibility' corresponded to this group.
+\subsection{Dataset}
+\begin{table}[bth]
+	\centering
+	\small
+	\begin{tabular}{c||p{8cm}}
+		\hline
+		Type & Description\\ \hline
+		MET & Some quantitative metric \\ \hline
+		ECO & An economy entity or facility\\ \hline
+		BIN & A binary attribute\\ \hline
+		CMP & Comparative attribute\\ \hline
+		QUA & Qualitative attribute\\ \hline
+		ACT & Activity, actions, implemented policies\\ \hline
+		INST & Institutions and organizations\\ \hline
+		SOC & Social groups and characteristics\\ \hline
+	\end{tabular}
+	\caption{Named entity types}
+	\label{tab:ner}
+\end{table}
+\begin{table}[bth]
+	\centering
+	\small
+	\begin{tabular}{c|c|p{8cm}}
+		\hline
+		Group & Type & Description\\ \hline
+		Current state of affairs & NNG & now negative \\ \hline
+		Current state of affairs & NNT & now neutral \\ \hline
+		Current state of affairs & NPS & now positive \\ \hline\hline
+
+		Results & PNG & past negative\\ \hline
+		Results & PNT & past neutral\\ \hline
+		Results & PNS & past positive\\ \hline\hline
+
+		Forecasts & FNG & future negative\\ \hline
+		Forecasts & FNT & future neutral\\ \hline
+		Forecasts & FNS & future positive\\ \hline\hline
+
+		Goals & GOL & some abstract goals\\ \hline
+		Tasks & TSK & tasks and performed actions to achieve goals\\ \hline
+
+	\end{tabular}
+	\caption{Semantic relation types}
+	\label{tab:rel}
+\end{table}
+\section{Our solution}
 \subsection{Named entities recognition}
 \subsection{Stand-alone relation extraction}
 \subsection{Relation classification with provided named entity tags}
+\section{Results}
+\section{Conclusion}
 \bibliography{semeval2018}
 
 
