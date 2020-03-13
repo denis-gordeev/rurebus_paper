@@ -50,9 +50,15 @@ In this work we present our system for RuREBus challenge held together with Dial
 \selectlanguage{english}
 
 \section{Introduction}
-There are many ways to extract information from text. One of the most popular approaches is to extract named entities and classify relations between them. One of the most popular datasets for this task is TACRED \cite{tacred} where semantic relations are understood as relations between two pairs of entities. 
+There are many ways to extract information from text. This task is often solved by extracting named entities and classifying relations between them. One of the most popular datasets for this task is TACRED \cite{tacred} where semantic relations are understood as relations between two pairs of entities.
 
-<TACRED METHODS>
+Nowadays, state-of-the art results for this dataset are achieved by using Transformer-based models \cite{attention}. The most advanced models (according to https://paperswithcode.com/sota/relation-extraction-on-tacred) use extra training data.
+
+The authors of Matching the Blanks: Distributional Similarity for Relation Learning \cite{BaldiniSoares2019}.
+
+Knowledge Enhanced Contextual Word Representations
+
+Among the systems that make use of only the provided data, the best results were achieved by Joshi et al. \cite{spanbert}.
 
 Unfortunately, such annotated datasets are scarce for most languages besides English. Some researchers have tried to solve this problem for the Russian language. They have used unsupervised approaches based on knowledge databases such as Wikidata and online encyclopedias such as Wikipedia. Models trained this way tend to be not specialized because the original database does not contain relations from the required domain. They also tend to work only for the most popular relation types such as geographical or professional ones which are common to Wikipedia.
 
@@ -116,7 +122,7 @@ Named entity groups could contain rather broad types of entities, for example "S
 \subsection{Relation classification with provided named entity tags}
 \section{Results}
 \section{Conclusion}
-\bibliography{semeval2018}
+\bibliography{dialogue}
 
 
 \end{document}

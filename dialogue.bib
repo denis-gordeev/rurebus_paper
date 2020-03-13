@@ -1,3 +1,32 @@
+@inproceedings{BaldiniSoares2019,
+abstract = {General purpose relation extractors, which can model arbitrary relations, are a core aspiration in information extraction. Efforts have been made to build general purpose extractors that represent relations with their surface forms, or which jointly embed surface forms with relations from an existing knowledge graph. However, both of these approaches are limited in their ability to generalize. In this paper, we build on extensions of Harris' distributional hypothesis to relations, as well as recent advances in learning text representations (specifically, BERT), to build task agnostic relation representations solely from entity-linked text. We show that these representations significantly outperform previous work on exemplar based relation extraction (FewRel) even without using any of that task's training data. We also show that models initialized with our task agnostic representations, and then tuned on supervised relation extraction datasets, significantly outperform the previous methods on SemEval 2010 Task 8, KBP37, and TACRED.},
+archivePrefix = {arXiv},
+arxivId = {1906.03158},
+author = {{Baldini Soares}, Livio and FitzGerald, Nicholas and Ling, Jeffrey and Kwiatkowski, Tom},
+booktitle = {arxiv.org},
+doi = {10.18653/v1/p19-1279},
+eprint = {1906.03158},
+file = {:home/denis/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Soares et al. - Unknown - Matching the Blanks Distributional Similarity for Relation Learning.pdf:pdf},
+pages = {2895--2905},
+title = {{Matching the Blanks: Distributional Similarity for Relation Learning}},
+url = {https://arxiv.org/abs/1906.03158},
+year = {2019}
+}
+@inproceedings{attention,
+abstract = {The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task, improving over the existing best results, including ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.0 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature.},
+archivePrefix = {arXiv},
+arxivId = {1706.03762},
+author = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, {\L}ukasz and Polosukhin, Illia},
+booktitle = {Advances in Neural Information Processing Systems},
+eprint = {1706.03762},
+file = {:home/denis/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Vaswani et al. - Unknown - Attention Is All You Need.pdf:pdf},
+issn = {10495258},
+pages = {5999--6009},
+title = {{Attention is all you need}},
+url = {http://papers.nips.cc/paper/7181-attention-is-all-you-need},
+volume = {2017-Decem},
+year = {2017}
+}
 @book{Pustejovsky2013,
 abstract = {Create your own natural language training corpus for machine learning. Whether you're working with English, Chinese, or any other natural language, this hands-on book guides you through a proven annotation development cycle—the process of adding metadata to your training corpus to help ML algorithms work more efficiently. You don't need any programming or linguistics experience to get started. Using detailed examples at every step, you'll learn how the MATTER Annotation Development Process helps you Model, Annotate, Train, Test, Evaluate, and Revise your training corpus. You also get a complete walkthrough of a real-world annotation project. Define a clear annotation goal before collecting your dataset (corpus) Learn tools for analyzing the linguistic content of your corpus Build a model and specification for your annotation project Examine the different annotation formats, from basic XML to the Linguistic Annotation Framework Create a gold standard corpus that can be used to train and test ML algorithms Select the ML algorithms that will process your annotated data Evaluate the test results and revise your annotation task Learn how to use lightweight software for annotating texts and adjudicating the annotations This book is a perfect companion to O'Reilly's Natural Language Processing with Python.},
 archivePrefix = {arXiv},
@@ -41,15 +70,16 @@ file = {:home/denis/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/
 pages = {35--45},
 title = {{Position-aware Attention and Supervised Data Improve Slot Filling}}
 }
-@techreport{spanbert,
-abstract = {We present SpanBERT, a pre-training method that is designed to better represent and predict spans of text. Our approach extends BERT by (1) masking contiguous random spans, rather than random tokens, and (2) training the span boundary representations to predict the entire content of the masked span, without relying on the individual token representations within it. Span-BERT consistently outperforms BERT and our better-tuned baselines, with substantial gains on span selection tasks such as question answering and coreference resolution. In particular, with the same training data and model size as BERT large , our single model obtains 94.6{\%} and 88.7{\%} F1 on SQuAD 1.1 and 2.0 respectively. We also achieve a new state of the art on the OntoNotes coreference resolution task (79.6{\%} F1), strong performance on the TACRED relation extraction benchmark, and even gains on GLUE. 1},
+@article{spanbert,
+abstract = {We present SpanBERT, a pre-training method that is designed to better represent and predict spans of text. Our approach extends BERT by (1) masking contiguous random spans, rather than random tokens, and (2) training the span boundary representations to predict the entire content of the masked span, without relying on the individual token representations within it. SpanBERT consistently outperforms BERT and our better-tuned baselines, with substantial gains on span selection tasks such as question answering and coreference resolution. In particular, with the same training data and model size as BERT-large, our single model obtains 94.6{\%} and 88.7{\%} F1 on SQuAD 1.1 and 2.0, respectively. We also achieve a new state of the art on the OntoNotes coreference resolution task (79.6$\backslash${\%} F1), strong performance on the TACRED relation extraction benchmark, and even show gains on GLUE.},
 archivePrefix = {arXiv},
-arxivId = {1907.10529v3},
-author = {Joshi, Mandar and Chen, Danqi and Liu, Yinhan and Weld, Daniel S and Zettlemoyer, Luke and Levy, Omer and Allen, †},
-eprint = {1907.10529v3},
+arxivId = {1907.10529},
+author = {Joshi, Mandar and Chen, Danqi and Liu, Yinhan and Weld, Daniel S and Zettlemoyer, Luke and Levy, Omer},
+eprint = {1907.10529},
 file = {:home/denis/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Joshi et al. - Unknown - SpanBERT Improving Pre-training by Representing and Predicting Spans.pdf:pdf},
 title = {{SpanBERT: Improving Pre-training by Representing and Predicting Spans}},
-url = {https://github.com/facebookresearch/}
+url = {https://github.com/facebookresearch/ http://arxiv.org/abs/1907.10529},
+year = {2019}
 }
 @article{bert,
 abstract = {We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers. Unlike recent language representation models, BERT is designed to pre-train deep bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers. As a result, the pre-trained BERT model can be fine-tuned with just one additional output layer to create state-of-the-art models for a wide range of tasks, such as question answering and language inference, without substantial task-specific architecture modifications. BERT is conceptually simple and empirically powerful. It obtains new state-of-the-art results on eleven natural language processing tasks, including pushing the GLUE score to 80.5{\%} (7.7{\%} point absolute improvement), MultiNLI accuracy to 86.7{\%} (4.6{\%} absolute improvement), SQuAD v1.1 question answering Test F1 to 93.2 (1.5 point absolute improvement) and SQuAD v2.0 Test F1 to 83.1 (5.1 point absolute improvement).},
@@ -126,20 +156,6 @@ publisher = {Association for Computational Linguistics},
 title = {{Distant Supervision for Relation Extraction with an Incomplete Knowledge Base}},
 url = {https://www.aclweb.org/anthology/N13-1095},
 year = {2013}
-}
-@inproceedings{distre,
-abstract = {We present SpanBERT, a pre-training method that is designed to better represent and predict spans of text. Our approach extends BERT by (1) masking contiguous random spans, rather than random tokens, and (2) training the span boundary representations to predict the entire content of the masked span, without relying on the individual token representations within it. SpanBERT consistently outperforms BERT and our better-tuned baselines, with substantial gains on span selection tasks such as question answering and coreference resolution. In particular, with the same training data and model size as BERT-large, our single model obtains 94.6{\%} and 88.7{\%} F1 on SQuAD 1.1 and 2.0, respectively. We also achieve a new state of the art on the OntoNotes coreference resolution task (79.6$\backslash${\%} F1), strong performance on the TACRED relation extraction benchmark, and even show gains on GLUE.},
-address = {Florence, Italy},
-archivePrefix = {arXiv},
-arxivId = {1907.10529},
-author = {Joshi, Mandar and Chen, Danqi and Liu, Yinhan and Weld, Daniel S. and Zettlemoyer, Luke and Levy, Omer},
-booktitle = {Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics},
-eprint = {1907.10529},
-pages = {1388--1398},
-publisher = {Association for Computational Linguistics},
-title = {{SpanBERT: Improving Pre-training by Representing and Predicting Spans}},
-url = {https://www.aclweb.org/anthology/P19-1134 http://arxiv.org/abs/1907.10529},
-year = {2019}
 }
 @inproceedings{deeppavlov,
 abstract = {Adoption of messaging communication and voice assistants has grown rapidly in the last years. This creates a demand for tools that speed up prototyping of featurerich dialogue systems. An open-source library DeepPavlov is tailored for development of conversational agents. The library prioritises efficiency, modularity, and extensibility with the goal to make it easier to develop dialogue systems from scratch and with limited data available. It supports modular as well as end-to-end approaches to implementation of conversational agents. Conversational agent consists of skills and every skill can be decomposed into components. Components are usually models which solve typical NLP tasks such as intent classification, named entity recognition or pre-trained word vectors. Sequence-to-sequence chit-chat skill, question answering skill or task-oriented skill can be assembled from components provided in the library.},
