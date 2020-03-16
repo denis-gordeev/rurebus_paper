@@ -130,13 +130,17 @@ The first task was to annotate named entities. First we transformed the data int
 
 BERT is a Transformer based model \cite{attention}. On top of BERT outputs we added a linear layer with softmax activation function and dropout regularization. The cross entropy loss function was used to train the model.
 
-Our system micro F1-score was 0.561 which was better than other contestant's scores.
+Our system with 0.561 micro F1-score on the public leaderboard outperformed solutions presented by other contestants.
 \subsection{End-to-end relation extraction}
+We viewed end-to-end relation extraction as a sequence labelling problem.
+
 For end-to-end relation extraction we went with a two-stage approach. At first we used the model from the first track to label named entities. After that using the provided named entities we trained our model to predict semantic relations.
 
-Our relation extraction pipeline was based on the work by Joshi et al. \cite{spanbert}. However, we did not follow the language model fine-tuning procedure described in the paper. We considered the task of relation extraction as a simple classification problem where given a sentence and a pair of named entities we need to correctly choose one of the possible labels for the semantic relation between them. Because we did not use the pre-training procedure by the authors of SpanBERT, our system is equivalent to a plain BERT-model with a softmax layer on top of it. Dropout regularization was used here as well.
+For this task we used a Roberta-based model. We viewed relation extraction as 
 
-The data was transformed into the format used by TACRED dataset \cite{tacred}. Each relation and its corresponding entities were considered as a single training sample. We also needed to generate pairs that did not contain any relations. Thus, we randomly sampled words that had no relations between them out of sentences.
+The data was transformed into the format used by TACRED dataset \cite{tacred}. Each relation and its corresponding entities were considered as a single training sample. We also needed to generate pairs that did not contain any relations. Thus, we randomly sampled words that had no relations between them out of sentences. The model input
+
+<ПРИМЕР ВХОДНОГО ТЕКСТА>
 
 Akin to BERT-multitask learning, in this competition we wanted to experiment with simultaneous finetuning for separate tracks. RuREBus competition provided an excellent framework for this idea because we had separate tacks with different target values but the same input data.
 
@@ -146,11 +150,11 @@ The system showed 0.132 micro F1-score and it would have taken the first place a
 \subsection{Relation classification with provided named entity tags}
 This track was very similar to end-to-end relation extraction. However, instead of using named entity labels predicted by our model, we could use the manual annotation provided by the organizers of the competition.
 
-The model for this track as equivalent to the system we used for end-to-end relation extraction. We also attempted at using the multi-task learning procedure. However, as in the previous case the quality deteriorated when the model trained to predict named entity tags. Thus, the loss coefficient for named entity recognition was also set to zero.
+The model for this track is equivalent to the system used for end-to-end relation extraction. We also attempted at using the multi-task learning procedure described in previous section. However, as in the previous case the quality deteriorated when the model was trained to predict named entity tags. Thus, the loss coefficient for named entity recognition was also set to zero.
 \section{Results}
-All in all, our named entity recognition model took the first place in the competition. However, the results are lower than for other datasets (e.g. for the Ontonotes dataset Transformer-based models usually get > 0.85 in F1-score \footnote{see http://docs.deeppavlov.ai/en/master/features/models/ner.html}). It can be explained by the small amount of training examples and complexity of the domain.
+All in all, our named entity recognition model with micro F1-score equal to took the first place in the competition. However, the results are lower than for other named entity recognition datasets (e.g. for the Ontonotes dataset Transformer-based models usually get > 0.85 in F1-score \footnote{see http://docs.deeppavlov.ai/en/master/features/models/ner.html}). It can be explained by the small amount of training examples and complexity of the domain.
 
-Our end-to-end relation extraction model was much worse than the model that used manual annotations provided by the organizers. 
+Our end-to-end relation extraction model despite being one of the best solutions at the competition was much worse than the model trained with manual annotations provided by the organizers. 
 
 Multi-task learning did not improve our results for this task.
 \section{Conclusion}
