@@ -6,11 +6,13 @@
 
 \begin{otherlanguage}{english}
 \begin{center}
-{\Large\bfseries{Joint task learning for relation extraction and named entity recognition}}
+{\Large\bfseries{Relation extraction as sequence labelling and the failed case of joint task learning}}
+% Relation extraction as sequence labelling and the failed case of joint task learning
+% Joint task learning for relation extraction and named entity recognition
 
 \medskip
 
-%Adis Davletov (\texttt{davletov-aa@ranepa.ru}), Denis Gordeev (\texttt{gordeev-di@ranepa.ru}), Alexey Rey (\texttt{rey-ai@ranepa.ru})
+%Adis Davletov (\texttt{davletov-aa@ranepa.ru}), Denis Gordeev (\texttt{gordeev-di@ranepa.ru}), Alexey Rey (\texttt{rey-ai@ranepa.ru}) Arefiev
 Authors
 
 \medskip
@@ -19,7 +21,7 @@ Authors
 Institution
 \end{center}
 
-In this work we present our system for RuREBus challenge held together with Dialog 2020 conference. The task consisted of 3 tracks: named entity recognition, relation extraction with provided named entity tags and end-to-end relation extraction. Our system took the first place in the named entity recognition track and the second place in the third track. For the second task we failed to submit the solution till the deadline but it was among the best systems. The systems for all tasks are based on Transformer models.
+In this work we present our system for RuREBus challenge held together with Dialog 2020 conference. The task consisted of 3 tracks: named entity recognition, relation extraction with provided named entity tags and end-to-end relation extraction. Our system took the first place in the named entity recognition track and the second place in the third track. For the second task we failed to submit the solution till the deadline but it would have been among the best systems. The systems for all tasks are based on Transformer models.
 
 \textbf{Key words:} relation extraction, named entity recognition, transformer, bert
 \end{otherlanguage}
@@ -123,6 +125,7 @@ Named entity groups could contain rather broad types of entities, for example "S
 	\label{tab:rel}
 \end{table}
 
+The organizers first held tracks 1 and 3 and after that track 2 was also run. We describe our solutions in the same order (first tracks 1 and 3, then track 2).
 \section{Our solution}
 The data for the competition was presented in brat format \cite{brat} where texts were given as plain txt files and annotations were provided in another file with mixed labels for named entities and relations between them. Thus, we first had to separate the labels and transform the data into special formats used by our models.
 
@@ -144,38 +147,31 @@ After dataset tokenization we got 10460 sentences containing 336023 tokens in th
 	\label{tab:tokenization}
 \end{table}
 
-\subsection{Named entities recognition}
+\subsection{Named entity recognition: track 1}
 The first task was to annotate named entities. First we transformed the data into the CONLL-2003 format where each line contained a word and its named entity tag. Sentences were separated with newlines. All texts were united in a single file where individual texts were divided with two empty lines. We split the data into training and validation datasets. We used a BERT-based system \cite{bert} with PyTorch model code and pretrained weights provided by Hugging Face. Due to competition being in Russian, we used the multilingual uncased base BERT model.
 
-BERT is a Transformer based model \cite{attention}. On top of BERT outputs we added a linear layer with softmax activation function and dropout regularization. The cross entropy loss function was used to train the model. For each word token in the sentence we took BERT embedding from its first BPE-token and fed it to the dropout layer followed by the linear layer. All non entity tokens were ignored.
+BERT is a Transformer based model \cite{attention}. On top of BERT outputs we added a linear layer with softmax activation function and dropout regularization. The cross entropy loss function was used to train the model. For each word token in the sentence we took BERT embedding from its first BPE-token and fed it to the dropout layer followed by the linear layer. All non entity tokens were ignored (i.e. padding tokens and tokens describing borders between sentences and various spans).
 
 Our system with 0.561 micro F1-score on the public leaderboard outperformed solutions presented by other contestants.
-\subsection{End-to-end relation extraction}
-In subtask 3 (E2E RE) we tried the same BERT as in subtask 1 and for subtask 2 (RE with NEs) we also tried base XLM-RoBERTa model. On top of these models we are adding dropout layer followed by tag and relation linear layers. We use weighted sum of cross entropy losses for tag and relation labeling as our final loss for optimization. Padding tokens are does not contribute to our loss.
-We viewed end-to-end relation extraction as a sequence labelling problem.
 
-For end-to-end relation extraction we went with a two-stage approach. At first we used the model from the first track to label named entities. After that using the provided named entities we trained our model to predict semantic relations.
+\subsection{End-to-end relation extraction: track 3}
+The second and the third tracks were relation classification. In the second track the organizers provided named entity tags while in the third they did not. For both tracks we used the equivalent approach.
 
-For this task we used a Roberta-based model. We viewed relation extraction as 
+Akin to BERT-multitask learning, in this competition we wanted to experiment with simultaneous finetuning for separate tracks. RuREBus competition provided an excellent framework for this idea because we had separate tracks with different target values but the same input data. Thus, we tried a multitask architecture to jointly predict tags and relations. To do so, we consider relation extraction as a sequence labeling problem (similar to how named entity recognition is usually solved). In each example we have one marked main entity and we predict all named entity tags and all relations between the main token and all other tokens in the sentence. We put an empty relation label (‘0’) if a token does not have relation to the marked entity and the relation tag otherwise. Special tokens marking the beginning and the ending of the main entity are added to input to tell the system which entity it should predict relations with. Thus, for each sentence we had to make $n$ predictions where $n$ is the number of named entities in the sentence. We did not relabel previously inferred named entity tags with new predictions.
 
-The data was transformed into the format used by TACRED dataset \cite{tacred}. Each relation and its corresponding entities were considered as a single training sample. We also needed to generate pairs that did not contain any relations. Thus, we randomly sampled words that had no relations between them out of sentences. The model input
+For end-to-end relation extraction we went with a two-stage approach. At first we used the model from the first track to label named entities. After that using the provided named entity predictions we trained our model to infer semantic relations.
 
-<ПРИМЕР ВХОДНОГО ТЕКСТА>
+In this task we used the same multilingual uncased BERT model as in subtask 1. However, to get simultaneous relation and named entity predictions on top of the model we added another dropout layer followed by tag and relation linear layers. We use weighted sum of cross entropy losses for tag and relation labeling as our final loss for optimization. Padding tokens do not contribute to our loss calculation.
 
+However, joint task learning only worsened our results and the best result at the validation set was 
 
 The system showed 0.132 micro F1-score and it would have taken the first place among the provided systems, if we had managed to submit our solution before the deadline.
+\subsection{Relation classification with provided named entity tags: track 2}
+The model for this track is equivalent to the system used for end-to-end relation extraction. We also attempted at using the multi-task learning procedure described in previous section. However, as in the previous case the quality deteriorated when the model was trained to predict named entity tags. Thus, the loss coefficient for named entity recognition was also set to zero.
 
-\subsection{Relation classification with provided named entity tags}
-Akin to BERT-multitask learning, in this competition we wanted to experiment with simultaneous finetuning for separate tracks. RuREBus competition provided an excellent framework for this idea because we had separate tacks with different target values but the same input data.
-
-The second and the third tracks were relation classification. In the second track the organizers provided named entity tags while in the third they did not.
-
-For subtasks 2 and 3 we tried multitask architecture to jointly predict tags and relations. To do so, we solve relation extraction problem as sequence labeling task. In each example we have one marked entity and we are predicting relations and tags simultaneously for all tokens in the sentence. ‘0’ relation if token does not have relation to marked entity and the exact relation otherwise. To tell the system regarding which entity it should predict relations we add special tokens of the beginning and ending of the entity.
-
-
+For subtask 2 (RE with NEs) we also tried a base XLM-RoBERTa model. 
 This track was very similar to end-to-end relation extraction. However, instead of using named entity labels predicted by our model, we could use the manual annotation provided by the organizers of the competition.
 
-The model for this track is equivalent to the system used for end-to-end relation extraction. We also attempted at using the multi-task learning procedure described in previous section. However, as in the previous case the quality deteriorated when the model was trained to predict named entity tags. Thus, the loss coefficient for named entity recognition was also set to zero.
 \section{Results}
 All in all, our named entity recognition model with micro F1-score equal to took the first place in the competition. However, the results are lower than for other named entity recognition datasets (e.g. for the Ontonotes dataset Transformer-based models usually get > 0.85 in F1-score \footnote{see http://docs.deeppavlov.ai/en/master/features/models/ner.html}). It can be explained by the small amount of training examples and complexity of the domain.
 
