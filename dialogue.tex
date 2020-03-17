@@ -6,7 +6,7 @@
 
 \begin{otherlanguage}{english}
 \begin{center}
-{\Large\bfseries{Relation extraction as sequence labelling and the failed case of joint task learning}}
+{\Large\bfseries{Relation extraction as sequence labelling or the failed case of joint task learning}}
 % Relation extraction as sequence labelling and the failed case of joint task learning
 % Joint task learning for relation extraction and named entity recognition
 
@@ -54,22 +54,18 @@ In this work we present our system for RuREBus challenge held together with Dial
 \section{Introduction}
 There are many ways to extract information from text. This task is often solved by extracting named entities and classifying relations between them. One of the most popular datasets for this task is TACRED \cite{tacred} where semantic relations are understood as relations between two pairs of entities.
 
-Nowadays, state-of-the art results for this dataset are achieved by using Transformer-based models \cite{attention}. The most advanced models (according to https://paperswithcode.com/sota/relation-extraction-on-tacred) use extra training data.
+Nowadays, state-of-the art results for this dataset are achieved by using Transformer-based models \cite{attention}. The most advanced models (according to paperswithcode \footnote{https://paperswithcode.com/sota/relation-extraction-on-tacred}) use extra training data or additional knowledge bases. For example, the authors of the leading paper "Matching the Blanks: Distributional Similarity for Relation Learning" \cite{BaldiniSoares2019} use Wikipedia data which is infeasible for domain-specific relations.
 
-The authors of Matching the Blanks: Distributional Similarity for Relation Learning \cite{BaldiniSoares2019}.
+Among the systems that do not use encyclopedias or other labeled data, the best results were achieved by Joshi et al. \cite{spanbert}. They pre-trained a BERT-inspired system. However, in their work instead of predicting individual masked tokens they trained the model to infer contiguous random  spans. The model was also trained to predict each token in the masked span using output representations of only span boundary tokens.
 
-Knowledge Enhanced Contextual Word Representations
-
-Among the systems that make use of only the provided data, the best results were achieved by Joshi et al. \cite{spanbert}.
-
-Unfortunately, such annotated datasets are scarce for most languages besides English. Some researchers have tried to solve this problem for the Russian language. They have used unsupervised approaches based on knowledge databases such as Wikidata and online encyclopedias such as Wikipedia. Models trained this way tend to be not specialized because the original database does not contain relations from the required domain. They also tend to work only for the most popular relation types such as geographical or professional ones which are common to Wikipedia.
+However, it is difficult to compare results for relation extraction systems for languages besides English because such annotated datasets are scarce for most languages including Russian. Some researchers have tried to solve this problem using unsupervised language-agnostic approaches and relying on knowledge databases such as Wikidata and various online encyclopedias such as Wikipedia \cite{Heist2017}. Models trained this way tend to be not specialized because the original database does not contain relations from the required domain. They also tend to work only for the most popular relation types such as geographical or professional ones which are common to Wikipedia.
 
 There are few annotated datasets for the Russian language. Among similar tasks to relation extraction there was held FactRuEval 2016 within the conference Dialog 2016. Within the competition contestants had to extract facts from news articles and to fill special slots in these facts (e.g. one of the fact types was 'Occupation' and its fields were 'POSITION', 'WHO', 'WHERE' and 'PHASE').
 
 RuREBus competition was devoted to the problem of relation extraction and named entities recognition in a specialized business domain.
 
 \section{Shared task overview}
-The organizers of the competition have provided 188 annotated texts as the training dataset and 544 texts as the test dataset for the first and thirds tracks and <N> <N> for the second track respectively. All texts were provided by the Ministry of Economic Development of the Russian Federation. The corpus consists of various regional and strategic plan reports. There are in total 8 named entity classes and 11 semantic relation classes (see Tables \ref{tab:ner} and \ref{tab:rel}). The organizers have also provided a large unannotated dataset for language model fine-tuning. However, we did not use it. A named entity can consist of several words. All entities and relations do not span across sentences.
+The organizers of the competition have provided 188 annotated texts as the training dataset and 544 texts as the test dataset for the first and third tracks and <N> <N> for the second track respectively. All texts were provided by the Ministry of Economic Development of the Russian Federation. The corpus consists of various regional and strategic plan reports. There are in total 8 named entity classes and 11 semantic relation classes (see Tables \ref{tab:ner} and \ref{tab:rel}). The organizers have also provided a large unannotated dataset for language model fine-tuning. However, we did not use it. A named entity can consist of several words. All entities and relations do not span across sentences. There may be many-to-many relations (see Fig. \ref{fig:brat}).
 
 \begin{figure}[thb]
 	\centering
@@ -152,6 +148,8 @@ The first task was to annotate named entities. First we transformed the data int
 
 BERT is a Transformer based model \cite{attention}. On top of BERT outputs we added a linear layer with softmax activation function and dropout regularization. The cross entropy loss function was used to train the model. For each word token in the sentence we took BERT embedding from its first BPE-token and fed it to the dropout layer followed by the linear layer. All non entity tokens were ignored (i.e. padding tokens and tokens describing borders between sentences and various spans).
 
+<DEV RESULTS + HYPERPARAMETER RESULTS>
+
 Our system with 0.561 micro F1-score on the public leaderboard outperformed solutions presented by other contestants.
 
 \subsection{End-to-end relation extraction: track 3}
@@ -163,23 +161,28 @@ For end-to-end relation extraction we went with a two-stage approach. At first w
 
 In this task we used the same multilingual uncased BERT model as in subtask 1. However, to get simultaneous relation and named entity predictions on top of the model we added another dropout layer followed by tag and relation linear layers. We use weighted sum of cross entropy losses for tag and relation labeling as our final loss for optimization. Padding tokens do not contribute to our loss calculation.
 
-However, joint task learning only worsened our results and the best result at the validation set was 
+However, joint task learning only worsened our results and the best result at the validation set was
 
-The system showed 0.132 micro F1-score and it would have taken the first place among the provided systems, if we had managed to submit our solution before the deadline.
+<VALIDATION TEST RESULTS>
+
+The system showed 0.132 micro F1-score using public test data and it would have taken the first place among the provided systems, if we had managed to submit our solution before the deadline.
 \subsection{Relation classification with provided named entity tags: track 2}
-The model for this track is equivalent to the system used for end-to-end relation extraction. We also attempted at using the multi-task learning procedure described in previous section. However, as in the previous case the quality deteriorated when the model was trained to predict named entity tags. Thus, the loss coefficient for named entity recognition was also set to zero.
+The model for this track is equivalent to the system used for end-to-end relation extraction. This track was very similar to end-to-end relation extraction. However, instead of using named entity labels predicted by our model, we could use the manual annotation provided by the organizers of the competition.
 
-For subtask 2 (RE with NEs) we also tried a base XLM-RoBERTa model. 
-This track was very similar to end-to-end relation extraction. However, instead of using named entity labels predicted by our model, we could use the manual annotation provided by the organizers of the competition.
+We also attempted at using the multi-task learning procedure described in previous section. However, as in the previous case the quality deteriorated when the model was trained to predict named entity tags. Thus, the loss coefficient for named entity recognition was also set to zero.
+
+For subtask 2 we also tried a base XLM-RoBERTa model. 
+
+<VALIDATION DETAILS>
 
 \section{Results}
-All in all, our named entity recognition model with micro F1-score equal to took the first place in the competition. However, the results are lower than for other named entity recognition datasets (e.g. for the Ontonotes dataset Transformer-based models usually get > 0.85 in F1-score \footnote{see http://docs.deeppavlov.ai/en/master/features/models/ner.html}). It can be explained by the small amount of training examples and complexity of the domain.
+All in all, our named entity recognition model with micro F1-score equal to 0.561 took the first place in the competition. However, the results are lower than for other named entity recognition datasets (e.g. for the Ontonotes dataset Transformer-based models usually get > 0.85 in F1-score \footnote{see http://docs.deeppavlov.ai/en/master/features/models/ner.html}). It can be attributed to the small amount of training examples and complexity of the domain.
 
-Our end-to-end relation extraction model despite being one of the best solutions at the competition was much worse than the model trained with manual annotations provided by the organizers. 
+Our end-to-end relation extraction model despite being one of the best solutions at the competition was much worse than the model trained with manual annotations provided by the organizers. We could have used approaches similar to pseudo labelling where we include only those named entity predictions that have high logit scores.
 
-Multi-task learning did not improve our results for this task.
+Multi-task learning did not improve our results for this task as well. 
 \section{Conclusion}
-In this work we present our system for RuREBus challenge held together with Dialog 2020 conference. The task consisted of 3 tracks: named entity recognition, relation extraction with provided named entity tags and end-to-end relation extraction. Our system took the first place in the named entity recognition track and the second place in the third track. For the second task we failed to submit the solution till the deadline but it was among the best systems. The systems for all tasks are based on Transformer models.
+In this work we present our system for RuREBus challenge held together with Dialog 2020 conference. The task consisted of 3 tracks: named entity recognition, relation extraction with provided named entity tags and end-to-end relation extraction. All tracks we considered as sequence labelling problems. We also attempted to use joint-task learning. However, it did not improve our results on the validation dataset. The system took the first place in the named entity recognition track and the second place in the third track. For the second task we failed to submit the solution till the deadline but it was among the best systems. The systems for all tasks are based on Transformer models.
 
 \section{Acknowledgments}
 We would like to thank the organizers of the competition. We believe that their work will be very helpful for the development of natural language processing for the Russian language.
