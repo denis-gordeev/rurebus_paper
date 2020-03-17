@@ -125,13 +125,33 @@ Named entity groups could contain rather broad types of entities, for example "S
 
 \section{Our solution}
 The data for the competition was presented in brat format \cite{brat} where texts were given as plain txt files and annotations were provided in another file with mixed labels for named entities and relations between them. Thus, we first had to separate the labels and transform the data into special formats used by our models.
-\subsection{Named entities recognition}
-The first task was to annotate named entities. First we transformed the data into the CONLL-2003 format where each line contained a word and its named entity tag. Sentences were separated with newlines. All texts were united in a single file where individual texts were divided with two empty lines. We used the same train, validation and test split as was provided by the organizers. We used a BERT-based system \cite{bert} with PyTorch model code and weights provided by Hugging Face. Due to competition being in Russian, we used the multilingual base BERT model.
 
-BERT is a Transformer based model \cite{attention}. On top of BERT outputs we added a linear layer with softmax activation function and dropout regularization. The cross entropy loss function was used to train the model.
+We used Razdel library to split plain texts into sentences and tokens \footnote{https://github.com/natasha/razdel}. It is a rule-based system that despite splitting sentences can also provide sentence and token offsets in the source text. Offset ranges provided by Razdel were used during preprocessing and postprocessing to map tags and relations to text spans which are required by the brat format.
+
+After dataset tokenization we got 10460 sentences containing 336023 tokens in the train set and 20483 sentences with 643668 tokens in the test set. There are 54377 and 89006 named entity tags in the train and test sets respectively (see Table \ref{tab:tokenization}).
+
+\begin{table}[bth]
+	\centering
+	\begin{tabular}{c|c|c|c|c}
+		\hline
+		\multicolumn{1}{c|}{Dataset} &
+		\multicolumn{4}{c}{Number of} \\  \hline
+		& Sentences& Tokens & NER tags & Original NER tags\\ \hline
+	train & 10460 & 336023 & 54377 & 54388\\ \hline
+	test & 20483 & 643668 & 89006 & 89879\\ \hline
+	\end{tabular}
+	\caption{Named entity types}
+	\label{tab:tokenization}
+\end{table}
+
+\subsection{Named entities recognition}
+The first task was to annotate named entities. First we transformed the data into the CONLL-2003 format where each line contained a word and its named entity tag. Sentences were separated with newlines. All texts were united in a single file where individual texts were divided with two empty lines. We split the data into training and validation datasets. We used a BERT-based system \cite{bert} with PyTorch model code and pretrained weights provided by Hugging Face. Due to competition being in Russian, we used the multilingual uncased base BERT model.
+
+BERT is a Transformer based model \cite{attention}. On top of BERT outputs we added a linear layer with softmax activation function and dropout regularization. The cross entropy loss function was used to train the model. For each word token in the sentence we took BERT embedding from its first BPE-token and fed it to the dropout layer followed by the linear layer. All non entity tokens were ignored.
 
 Our system with 0.561 micro F1-score on the public leaderboard outperformed solutions presented by other contestants.
 \subsection{End-to-end relation extraction}
+In subtask 3 (E2E RE) we tried the same BERT as in subtask 1 and for subtask 2 (RE with NEs) we also tried base XLM-RoBERTa model. On top of these models we are adding dropout layer followed by tag and relation linear layers. We use weighted sum of cross entropy losses for tag and relation labeling as our final loss for optimization. Padding tokens are does not contribute to our loss.
 We viewed end-to-end relation extraction as a sequence labelling problem.
 
 For end-to-end relation extraction we went with a two-stage approach. At first we used the model from the first track to label named entities. After that using the provided named entities we trained our model to predict semantic relations.
@@ -142,12 +162,17 @@ The data was transformed into the format used by TACRED dataset \cite{tacred}. E
 
 <ПРИМЕР ВХОДНОГО ТЕКСТА>
 
-Akin to BERT-multitask learning, in this competition we wanted to experiment with simultaneous finetuning for separate tracks. RuREBus competition provided an excellent framework for this idea because we had separate tacks with different target values but the same input data.
-
 
 The system showed 0.132 micro F1-score and it would have taken the first place among the provided systems, if we had managed to submit our solution before the deadline.
 
 \subsection{Relation classification with provided named entity tags}
+Akin to BERT-multitask learning, in this competition we wanted to experiment with simultaneous finetuning for separate tracks. RuREBus competition provided an excellent framework for this idea because we had separate tacks with different target values but the same input data.
+
+The second and the third tracks were relation classification. In the second track the organizers provided named entity tags while in the third they did not.
+
+For subtasks 2 and 3 we tried multitask architecture to jointly predict tags and relations. To do so, we solve relation extraction problem as sequence labeling task. In each example we have one marked entity and we are predicting relations and tags simultaneously for all tokens in the sentence. ‘0’ relation if token does not have relation to marked entity and the exact relation otherwise. To tell the system regarding which entity it should predict relations we add special tokens of the beginning and ending of the entity.
+
+
 This track was very similar to end-to-end relation extraction. However, instead of using named entity labels predicted by our model, we could use the manual annotation provided by the organizers of the competition.
 
 The model for this track is equivalent to the system used for end-to-end relation extraction. We also attempted at using the multi-task learning procedure described in previous section. However, as in the previous case the quality deteriorated when the model was trained to predict named entity tags. Thus, the loss coefficient for named entity recognition was also set to zero.
