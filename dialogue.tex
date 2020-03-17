@@ -155,7 +155,16 @@ Our system with 0.561 micro F1-score on the public leaderboard outperformed solu
 \subsection{End-to-end relation extraction: track 3}
 The second and the third tracks were relation classification. In the second track the organizers provided named entity tags while in the third they did not. For both tracks we used the equivalent approach.
 
-Akin to BERT-multitask learning, in this competition we wanted to experiment with simultaneous finetuning for separate tracks. RuREBus competition provided an excellent framework for this idea because we had separate tracks with different target values but the same input data. Thus, we tried a multitask architecture to jointly predict tags and relations. To do so, we consider relation extraction as a sequence labeling problem (similar to how named entity recognition is usually solved). In each example we have one marked main entity and we predict all named entity tags and all relations between the main token and all other tokens in the sentence. We put an empty relation label (‘0’) if a token does not have relation to the marked entity and the relation tag otherwise. Special tokens marking the beginning and the ending of the main entity are added to input to tell the system which entity it should predict relations with. Thus, for each sentence we had to make $n$ predictions where $n$ is the number of named entities in the sentence. We did not relabel previously inferred named entity tags with new predictions.
+Akin to BERT-multitask learning, in this competition we wanted to experiment with simultaneous finetuning for separate tracks. RuREBus competition provided an excellent framework for this idea because we had separate tracks with different target values but the same input data. Thus, we tried a multitask architecture to jointly predict tags and relations. To do so, we consider relation extraction as a sequence labeling problem (similar to how named entity recognition is usually solved). In each example we have one marked main entity and we predict all named entity tags and all relations between the main token and all other tokens in the sentence (see Fig. \ref{fig:rel}). We put an empty relation label (‘0’) if a token does not have relation to the marked entity and the relation tag otherwise. Special tokens marking the beginning and the ending of the main entity are added to input to tell the system which entity it should predict relations with. Thus, for each sentence we had to make $n$ predictions where $n$ is the number of named entities in the sentence. We did not relabel previously inferred named entity tags with new predictions.
+
+
+\begin{figure}[thb]
+	\centering
+	\includegraphics[scale=0.5]{pics/rel2}
+	\caption{Joint relation extraction and named entity recognition training.}
+	\label{fig:rel}
+\end{figure}
+
 
 For end-to-end relation extraction we went with a two-stage approach. At first we used the model from the first track to label named entities. After that using the provided named entity predictions we trained our model to infer semantic relations.
 
