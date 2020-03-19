@@ -156,10 +156,11 @@
 	Our system with 0.561 micro F1-score on the public leaderboard outperformed solutions presented by other contestants.
 	
 	\subsection{End-to-end relation extraction: track 3}
-	The second and the third tracks were relation classification. In the second track the organizers provided named entity tags while in the third they did not. For both tracks we used the equivalent approach.
+	The second and the third subtasks were relation classification. In the second subtask the organizers provided named entity tags while in the third one they did not. For both tracks we used the equivalent approach.
 	
 	Akin to BERT-multitask learning, in this competition we wanted to experiment with simultaneous finetuning for separate tracks. RuREBus competition provided an excellent framework for this idea because we had separate tracks with different target values but the same input data. Thus, we tried a multitask architecture to jointly predict tags and relations. To do so, we consider relation extraction as a sequence labeling problem (similar to how named entity recognition is usually solved). In each example we have one marked main entity and we predict all named entity tags and all relations between the main token and all other tokens in the sentence (see Fig. \ref{fig:rel}). We put an empty relation label (‘0’) if a token does not have relation to the marked entity and the relation tag otherwise. Special tokens marking the beginning and the ending of the main entity are added to input to tell the system which entity it should predict relations with. Thus, for each sentence we had to make $n$ predictions where $n$ is the number of named entities in the sentence. We did not relabel previously inferred named entity tags with new predictions.
 	
+	Sequence labelling might be a preferable solution if we are interested in limiting the number of model calls and our model run time does not depend on the sequence length (recurrent neural networks).
 	
 	\begin{figure}[thb]
 		\centering
@@ -188,13 +189,13 @@
 	<VALIDATION DETAILS>
 	
 	\section{Results}
-	All in all, our named entity recognition model with micro F1-score equal to 0.561 took the first place in the competition. However, the results are lower than for other named entity recognition datasets (e.g. for the Ontonotes dataset Transformer-based models usually get > 0.85 in F1-score \footnote{see http://docs.deeppavlov.ai/en/master/features/models/ner.html}). It can be attributed to the small amount of training examples and complexity of the domain.
+	All in all, our named entity recognition model with micro F1-score equal to 0.561 took the first place in the competition. However, the results are lower than for other named entity recognition datasets (e.g. for the Ontonotes dataset Transformer-based models usually get > 0.85 in F1-score \footnote{see http://docs.deeppavlov.ai/en/master/features/models/ner.html}). It can be attributed to the small nmmber of training examples and complexity of the domain.
 	
 	Our end-to-end relation extraction model despite being one of the best solutions at the competition was much worse than the model trained with manual annotations provided by the organizers. In future we will try to use approaches similar to pseudo labelling where we include only those named entity predictions that have high logit scores instead of all predictions.
 	
 	Multi-task learning did not improve our results for this task as well. 
 	\section{Conclusion}
-	In this work we present our system for RuREBus challenge held together with Dialog 2020 conference. The task consisted of 3 tracks: named entity recognition, relation extraction with provided named entity tags and end-to-end relation extraction. All tracks we considered as sequence labelling problems. We also attempted to use joint-task learning. However, it did not improve our results on the validation dataset. The system took the first place in the named entity recognition track and the second place in the third track. For the second task we failed to submit the solution till the deadline but it was among the best systems. The systems for all tasks are based on Transformer models.
+	In this work we present our system for RuREBus challenge held together with Dialog 2020 conference. The task consisted of 3 tracks: named entity recognition, relation extraction with provided named entity tags and end-to-end relation extraction. All tracks we considered as sequence labelling problems. We show that sequence labelling might be a decent approach for the relation extraction problem. We also attempted to use joint-task learning. However, it did not improve our results on the validation dataset. The system took the first place in the named entity recognition track and the second place in the third track. For the second task we failed to submit the solution till the deadline but it was among the best systems. The systems for all tasks are based on Transformer models.
 	
 	\section{Acknowledgments}
 	We would like to thank the organizers of the competition. We believe that their work will be very helpful for the development of natural language processing for the Russian language.
